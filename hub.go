@@ -10,6 +10,7 @@ type Client struct {
 	username string
 	email    string
 	password string
+	send     chan []byte
 }
 
 // use channels here b/c we want to work with go-routines(similar to threads), channels allow data to be shared
