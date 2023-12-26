@@ -1,29 +1,24 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Chat App</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
 <body>
-<script type="text/javascript">
-    var socket = new WebSocket("ws://localhost:8080/ws");
-
-    socket.onopen = function(e) {
-      console.log("[open] Connection established");
-      socket.send("Hello, server!");
-    };
-
-    socket.onmessage = function(event) {
-      console.log(`[message] Data received from server: ${event.data}`);
-    };
-
-    socket.onclose = function(event) {
-      if (event.wasClean) {
-        console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-      } else {
-        console.error('[close] Connection died');
-      }
-    };
-
-    socket.onerror = function(error) {
-      console.error(`[error] ${error.message}`);
-    };
-</script>
+    <div id="app-container">
+        <header>
+            <h1>Chat App</h1>
+        </header>
+        <main>
+            <div id="message-feed">
+                <!-- Messages will be loaded here -->
+            </div>
+            <div id="new-message">
+                <textarea id="message-input" placeholder="Your message..."></textarea>
+                <button id="send-button">Send</button>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
