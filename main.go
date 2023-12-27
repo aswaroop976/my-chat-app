@@ -4,10 +4,41 @@ import (
 	"log"
 	"net/http"
 
+	// "text/template"
+	"html/template"
+
 	// "github.com/go-sql-driver/mysql"
 
 	"github.com/gorilla/websocket"
 )
+
+type Client struct {
+	conn     *websocket.Conn
+	userId   int
+	username string
+	email    string
+	password string
+	send     chan []byte
+}
+
+// use channels here b/c we want to work with go-routines(similar to threads), channels allow data to be shared
+// across go-routines without the need for locks. Synchronization is automatic, this works because of the blocking behavior of channels
+
+type Hub struct {
+	clients    map[*Client]bool
+	broadcast  chan []byte  // Broadcasts messages to the clients
+	register   chan *Client // Registers new clients
+	unregister chan *Client // Removes clients
+}
+
+func newHub() *Hub {
+	return &Hub{
+		broadcast:  make(chan []byte),
+		register:   make(chan *Client),
+		unregister: make(chan *Client),
+		clients:    make(map[*Client]bool),
+	}
+}
 
 // idk I was doing some cloud-sql stuff here might continue later
 // func connect() {
@@ -103,12 +134,36 @@ func handleConnections(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleLogIn(w http.ResponseWriter, r *http.Request) {
+	data := struct {
+		Title   string
+		Heading string
+	}{
+		Title:   "My Dynamic Page",
+		Heading: "Welcome to the Chat App",
+	}
+	tmpl, err := template.ParseFiles("frontend/signup-login/login.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+}
 func main() {
 	hub := newHub()
 	go hub.run()
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("very crazy"))
-	})
+	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// w.Write([]byte("very crazy"))
+	// })
+	fileServer := http.FileServer(http.Dir("./static"))
+	http.Handle("/", fileServer)
+	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// 	handleLogIn(w, r)
+	// })
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		handleConnections(hub, w, r)
