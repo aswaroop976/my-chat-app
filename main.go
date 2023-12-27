@@ -4,8 +4,34 @@ import (
 	"log"
 	"net/http"
 
+	// "github.com/go-sql-driver/mysql"
+
 	"github.com/gorilla/websocket"
 )
+
+// idk I was doing some cloud-sql stuff here might continue later
+// func connect() {
+// 	cleanup, err := mysql.RegisterDriver("cloudsql-mysql")
+// 	if err != nil {
+// 		// ... handle error
+// 	}
+// 	// call cleanup when you're done with the database connection
+// 	defer cleanup()
+// 	var (
+// 		dbUser                 = "root"
+// 		dbPwd                  = mustGetenv("DB_PASS")                  // e.g. 'my-db-password'
+// 		dbName                 = mustGetenv("DB_NAME")                  // e.g. 'my-database'
+// 		instanceConnectionName = mustGetenv("INSTANCE_CONNECTION_NAME") // e.g. 'project:region:instance'
+// 		usePrivate             = os.Getenv("PRIVATE_IP")
+// 	)
+// 	dbURI := fmt.Sprintf("%s:%s@cloudsqlconn(localhost:3306)/%s?parseTime=true",
+// 		dbUser, dbPwd, dbName)
+// 	db, err := sql.Open(
+// 		"cloudsql-mysql",
+// 		"real-time-chat-app-409421:us-central1:fighting-game-main-db",
+// 	)
+// 	// ... etc
+// }
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
