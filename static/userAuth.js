@@ -1,17 +1,26 @@
 document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
+    var uname = document.getElementById('username').value;
+    var passwd = document.getElementById('password').value;
     var message = document.getElementById('message');
-// need to change all of this below:    
-    if (username === "admin" && password === "password") {
-        message.innerHTML = "Login successful!";
-        message.style.color = "green";
-    } else {
-        message.innerHTML = "Login failed. Invalid username or password.";
-        message.style.color = "red";
-    }
+    // Define the URL of the local server
+    const url = 'http://localhost:8080/form'; // Replace '/api' with your specific endpoint
+
+    // Define the data you want to send
+    const data = {
+        username: uname,
+        password: passwd
+    };
+    console.log(data)
+    // Use the fetch API to send the POST request
+    fetch(url, {
+        method: 'POST', // Specify the method
+        headers: {
+            'Content-Type': 'application/json', // Specify the content type
+        },
+        body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+    })
 });
 
 document.getElementById('signUpButton').addEventListener('click', function () {

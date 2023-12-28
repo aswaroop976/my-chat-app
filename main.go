@@ -1,44 +1,17 @@
 package main
 
+// to run type in "go run main.go hub.go"
+
 import (
 	"log"
 	"net/http"
 
 	// "text/template"
-	"html/template"
 
 	// "github.com/go-sql-driver/mysql"
 
 	"github.com/gorilla/websocket"
 )
-
-type Client struct {
-	conn     *websocket.Conn
-	userId   int
-	username string
-	email    string
-	password string
-	send     chan []byte
-}
-
-// use channels here b/c we want to work with go-routines(similar to threads), channels allow data to be shared
-// across go-routines without the need for locks. Synchronization is automatic, this works because of the blocking behavior of channels
-
-type Hub struct {
-	clients    map[*Client]bool
-	broadcast  chan []byte  // Broadcasts messages to the clients
-	register   chan *Client // Registers new clients
-	unregister chan *Client // Removes clients
-}
-
-func newHub() *Hub {
-	return &Hub{
-		broadcast:  make(chan []byte),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
-	}
-}
 
 // idk I was doing some cloud-sql stuff here might continue later
 // func connect() {
@@ -68,8 +41,6 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true // Adjust the origin checking for your requirements
 	},
-	// ReadBufferSize:  1024, //idk if I need these or not
-	// WriteBufferSize: 1024,
 }
 
 func (h *Hub) run() {
@@ -114,43 +85,33 @@ func handleConnections(hub *Hub, w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		hub.broadcast <- message
-		// msgType, msg, err := ws.ReadMessage()
-		// if err != nil {
-		// 	return
-		// }
-		// fmt.Printf("message: %s", string(msg))
-		// if err = ws.WriteMessage(msgType, msg); err != nil {
-		// 	return
-		// }
-		// // var msg string
-		// // // Read in a new message as JSON and map it to a Message object
-		// // err := ws.ReadJSON(&msg)
-		// // if err != nil {
-		// // 	log.Printf("error: %v", err)
-		// // 	break
-		// // }
-		// // // Here, you can process the message or send it to other clients
-		// // log.Printf("Received: %s", msg)
 	}
 }
 
 func handleLogIn(w http.ResponseWriter, r *http.Request) {
-	data := struct {
-		Title   string
-		Heading string
-	}{
-		Title:   "My Dynamic Page",
-		Heading: "Welcome to the Chat App",
-	}
-	tmpl, err := template.ParseFiles("frontend/signup-login/login.html")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	//to serve dynamic pages--------------------------------------------------------
+	// data := struct {
+	// 	Title   string
+	// 	Heading string
+	// }{
+	// 	Title:   "My Dynamic Page",
+	// 	Heading: "Welcome to the Chat App",
+	// }
+	// tmpl, err := template.ParseFiles("frontend/signup-login/login.html")
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+	// err = tmpl.Execute(w, data)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// }
+	// to handle form submission(handling a POST request)
+	if r.Method != "POST" {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	log.Printf("%s", r.Body)
 
 }
 func main() {
@@ -164,7 +125,9 @@ func main() {
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 	// 	handleLogIn(w, r)
 	// })
-
+	http.HandleFunc("/form", func(w http.ResponseWriter, r *http.Request) {
+		handleLogIn(w, r)
+	})
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		handleConnections(hub, w, r)
 	})
