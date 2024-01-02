@@ -4,7 +4,7 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
     var uname = document.getElementById('username').value;
     var passwd = document.getElementById('password').value;
     // Define the URL of the local server
-    const url = 'http://localhost:8080/form'; // Replace '/api' with your specific endpoint
+    const url = 'http://localhost:8080/login'; // Replace '/api' with your specific endpoint
 
     // Define the data you want to send
     const data = {
