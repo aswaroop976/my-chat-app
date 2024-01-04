@@ -83,6 +83,23 @@ func (h *Hub) run() {
 	}
 }
 
+func (c *Client) writePump() {
+	for {
+		message, ok := <-c.send
+		if !ok {
+			// The channel is closed, handle disconnection
+			c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+			return
+		}
+
+		err := c.conn.WriteMessage(websocket.TextMessage, message)
+		if err != nil {
+			// Handle errors (like disconnection)
+			break
+		}
+	}
+}
+
 func handleConnections(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -92,7 +109,7 @@ func handleConnections(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 	client := &Client{conn: ws, send: make(chan []byte, 256)}
 	hub.register <- client
-
+	go client.writePump()
 	defer func() { hub.unregister <- client }()
 	// Infinite loop for reading messages from the WebSocket
 	for {
@@ -132,7 +149,9 @@ func handleLogIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// http.ServeFile(w, r, filepath.Join("frontend", "socket_test.html"))
+	//	http.ServeFile(w, r, filepath.Join("frontend", "socket_test.html")) // idk bro just please render please
+	//	fs := http.FileServer(http.Dir("frontend"))
+	//	fs.ServeHTTP(w, r)
 
 }
 func main() {
