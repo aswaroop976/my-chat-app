@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	// "github.com/rs/cors"
 
@@ -131,6 +132,7 @@ func handleLogIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// http.ServeFile(w, r, filepath.Join("frontend", "socket_test.html"))
 
 }
 func main() {
@@ -139,8 +141,23 @@ func main() {
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 	// 	w.Write([]byte("very crazy"))
 	// })
-	fileServer := http.FileServer(http.Dir("./static"))
-	http.Handle("/", fileServer)
+	// fileServer := http.FileServer(http.Dir("./static"))
+	// http.Handle("/", fileServer)
+	fs := http.FileServer(http.Dir("static"))
+
+	// Serve static files
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	// Custom handler for the root URL
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// Serve index.html for the root URL
+		if r.URL.Path == "/" {
+			http.ServeFile(w, r, filepath.Join("static", "login.html"))
+			return
+		}
+		// Serve static files for other URLs
+		fs.ServeHTTP(w, r)
+	})
 	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		handleLogIn(w, r)
 	})
