@@ -53,6 +53,9 @@ type Signup struct {
 	Password string `json:"password"`
 	Email    string `json: "email"`
 }
+type Message struct {
+	Content string `json:"content"`
+}
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -149,11 +152,14 @@ func handleLogIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	//	http.ServeFile(w, r, filepath.Join("frontend", "socket_test.html")) // idk bro just please render please
-	//	fs := http.FileServer(http.Dir("frontend"))
-	//	fs.ServeHTTP(w, r)
-
+	if login.Username == "test" && login.Password == "test" {
+		//render the frontend
+		// http.ServeFile(w, r, filepath.Join("frontend", "index.html")) //I'm a fool for thinking this could work
+		msg := Message{Content: "Hello from Go!"}
+		json.NewEncoder(w).Encode(msg)
+	}
 }
+
 func main() {
 	hub := newHub()
 	go hub.run()
