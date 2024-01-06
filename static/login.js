@@ -19,7 +19,8 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
             'Content-Type': 'application/json', // Specify the content type
         },
         body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
-    }).then(response => response.json()).then(data => console.log(data));
+    }).then(response => response.json())
+        .then(data => console.log(data));
 });
 
 //document.getElementById('signUpForm').addEventListener('click', function (e) {
