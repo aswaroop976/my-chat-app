@@ -44,25 +44,32 @@ import (
 //		)
 //		// ... etc
 //	}
+ 
+// struct used when users try to login
+// used to store the username and password passed in as a json object
 type Login struct {
 	Username string `json:"username":`
 	Password string `json:"password"`
 }
+// same idea with the login struct
+// used to store the username, email, and password pased in when a user signs up
 type Signup struct {
 	Username string `json:"username":`
 	Password string `json:"password"`
 	Email    string `json: "email"`
 }
+//struct to write messages back to frontend in a json format
 type Message struct {
 	Content string `json:"content"`
 }
-
+//upgrades the http connection to a websocket connection
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true // Adjust the origin checking for your requirements
 	},
 }
-
+// run function for the hub(see definition in hub.go). Runs the hub struct, controls sending messages to the clients.
+// Also handles registering and unregisterign of clients
 func (h *Hub) run() {
 	for {
 		select {
@@ -85,7 +92,7 @@ func (h *Hub) run() {
 		}
 	}
 }
-
+//checks the send channel of clients, making sure to write messages to the websocket connecton once they appear on the send channel
 func (c *Client) writePump() {
 	for {
 		message, ok := <-c.send
@@ -102,7 +109,8 @@ func (c *Client) writePump() {
 		}
 	}
 }
-
+//like it sounds handles websocket connections when they initially connect, and listens for messages from these connections, and broadcasts any messages
+// it receives. 
 func handleConnections(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -124,6 +132,8 @@ func handleConnections(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		hub.broadcast <- message
 	}
 }
+// handles sign in by parsing through POST request sent by the frontend with data regaring a new user trying to sign in
+// if sign in is successful sends a message back to frontend indicating a page redirect
 func handleSignIn(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -142,6 +152,8 @@ func handleSignIn(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(msg)
 
 }
+// handles log in by parsing through POST request sent by frontend with user trying to log back in.
+// if login is successful sends a message back to frontend indicating a page redirect
 func handleLogIn(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -167,8 +179,8 @@ func handleLogIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	hub := newHub()
-	go hub.run()
+	hub := newHub() // initializes a new hub struct
+	go hub.run() // runs the run() function in a seperate go routine
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 	// 	w.Write([]byte("very crazy"))
 	// })
