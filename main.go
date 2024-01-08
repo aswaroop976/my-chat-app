@@ -152,10 +152,13 @@ func handleLogIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if login.Username == "test" && login.Password == "test" {
+	if login.Username == "test" && login.Password == "test" { // replace with an actual check for username and passwd
 		//render the frontend
 		// http.ServeFile(w, r, filepath.Join("frontend", "index.html")) //I'm a fool for thinking this could work
-		msg := Message{Content: "Hello from Go!"}
+		msg := Message{Content: "Allow login"}
+		json.NewEncoder(w).Encode(msg)
+	} else {
+		msg := Message{Content: "No"}
 		json.NewEncoder(w).Encode(msg)
 	}
 }
@@ -169,6 +172,7 @@ func main() {
 	// fileServer := http.FileServer(http.Dir("./static"))
 	// http.Handle("/", fileServer)
 	fs := http.FileServer(http.Dir("static"))
+	frontend_fs := http.FileServer(http.Dir("frontend"))
 
 	// Serve static files
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
@@ -183,6 +187,18 @@ func main() {
 		// Serve static files for other URLs
 		fs.ServeHTTP(w, r)
 	})
+
+	http.Handle("/frontend/", http.StripPrefix("/frontend/", frontend_fs))
+	http.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
+		// Serve index.html for the root URL
+		if r.URL.Path == "/chat" {
+			http.ServeFile(w, r, filepath.Join("frontend", "index.html"))
+			return
+		}
+		// Serve static files for other URLs
+		frontend_fs.ServeHTTP(w, r)
+	})
+
 	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		handleLogIn(w, r)
 	})

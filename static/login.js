@@ -20,6 +20,11 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
         },
         body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
     }).then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => {
+            console.log(data.content)
+            if (data.content == "Allow login") {
+                window.location.href = 'http://localhost:8080/chat'
+            }
+        })
 });
 
