@@ -185,7 +185,7 @@ func main() {
 		// Serve index.html for the root URL
 		if r.URL.Path == "/" {
 			http.ServeFile(w, r, filepath.Join("static", "login.html"))
-			return
+			// return
 		}
 		// Serve static files for other URLs
 		fs.ServeHTTP(w, r)
@@ -196,7 +196,7 @@ func main() {
 		// Serve index.html for the root URL
 		if r.URL.Path == "/chat" {
 			http.ServeFile(w, r, filepath.Join("frontend", "index.html"))
-			return
+			// return
 		}
 		// Serve static files for other URLs
 		frontend_fs.ServeHTTP(w, r)
