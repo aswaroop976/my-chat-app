@@ -137,6 +137,9 @@ func handleSignIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	//need to add some checking to make sure that the username, email, and password are all valid
+	msg := Message{Content: "Redirect"}
+	json.NewEncoder(w).Encode(msg)
 
 }
 func handleLogIn(w http.ResponseWriter, r *http.Request) {

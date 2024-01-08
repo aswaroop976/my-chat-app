@@ -16,7 +16,13 @@ document.getElementById('signUpForm').addEventListener('submit', function (e) {
             'Content-Type': 'application/json', // Specify the content type
         },
         body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
-    })
+    }).then(response => response.json())
+        .then(data => {
+            console.log(data.content)
+            if (data.content == "Redirect") {
+                window.location.href = 'http://localhost:8080/chat'
+            }
+        })
 
 
 });
