@@ -38,6 +38,17 @@
 
         socket.onmessage = function (event) {
             console.log(`[message] Data received from server: ${event.data}`);
+            // dynamically create message cards here
+            const div = document.createElement('div')
+            const h4 = document.createElement('h4')
+            const p = document.createElement('p')
+            const feed_div = document.querySelector('#message-feed')
+            feed_div.append(div)
+            div.setAttribute('class', 'card')
+            div.append(h4)
+            h4.append(p)
+            p.innerHTML = event.data
+
         };
 
         socket.onclose = function (event) {
@@ -72,6 +83,7 @@
         div.append(h4)
         h4.append(p)
         p.innerHTML = "hello there I was generated from js"
+
 
         // Additional functionality to retrieve and display messages will be added here
 
