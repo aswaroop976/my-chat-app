@@ -194,24 +194,24 @@ func main() {
 	// })
 	// fileServer := http.FileServer(http.Dir("./static"))
 	// http.Handle("/", fileServer)
-	fs := http.FileServer(http.Dir("static"))
-	frontend_fs := http.FileServer(http.Dir("frontend"))
+	fs := http.FileServer(http.Dir("frontend"))
+	// frontend_fs := http.FileServer(http.Dir("frontend"))
 
 	// Serve static files
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.Handle("/frontend/", http.StripPrefix("/frontend/", fs))
 
 	// Custom handler for the root URL
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Serve index.html for the root URL
 		if r.URL.Path == "/" {
-			http.ServeFile(w, r, filepath.Join("static", "login.html"))
+			http.ServeFile(w, r, filepath.Join("frontend", "login.html"))
 			// return
 		}
 		// Serve static files for other URLs
 		fs.ServeHTTP(w, r)
 	})
 
-	http.Handle("/frontend/", http.StripPrefix("/frontend/", frontend_fs))
+	// http.Handle("/frontend/", http.StripPrefix("/frontend/", frontend_fs))
 	http.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
 		// Serve index.html for the root URL
 		if r.URL.Path == "/chat" {

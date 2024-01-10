@@ -1,0 +1,50 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+#app-container {
+    max-width: 600px;
+    margin: auto;
+}
+
+header {
+    background-color: #f0f0f0;
+    padding: 10px;
+    text-align: center;
+}
+
+#message-feed {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#new-message {
+    padding: 10px;
+}
+
+#message-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+#send-button {
+    width: 100%;
+    padding: 10px;
+    background-color: blue;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.card {
+    box-shadow: 10px 10px 5px 0px rgba(238, 238, 238, 1);
+    margin: 15px;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+/* Add media queries for larger screens if needed */

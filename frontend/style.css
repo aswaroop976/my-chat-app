@@ -1,50 +1,45 @@
-body,
-html {
-    margin: 0;
-    padding: 0;
+body {
     font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
 }
 
-#app-container {
-    max-width: 600px;
-    margin: auto;
+.login-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-header {
-    background-color: #f0f0f0;
-    padding: 10px;
-    text-align: center;
-}
-
-#message-feed {
-    border-bottom: 1px solid #e0e0e0;
-}
-
-#new-message {
-    padding: 10px;
-}
-
-#message-input {
-    width: 100%;
-    padding: 10px;
+.form-control {
     margin-bottom: 10px;
-    box-sizing: border-box;
 }
 
-#send-button {
+.form-control label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-control input {
     width: 100%;
     padding: 10px;
-    background-color: blue;
-    color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
     border: none;
+    background-color: #5c6bc0;
+    color: white;
+    border-radius: 4px;
     cursor: pointer;
 }
 
-.card {
-    box-shadow: 10px 10px 5px 0px rgba(238, 238, 238, 1);
-    margin: 15px;
-    text-align: center;
-    padding-bottom: 10px;
+button:hover {
+    background-color: #3f51b5;
 }
-
-/* Add media queries for larger screens if needed */
